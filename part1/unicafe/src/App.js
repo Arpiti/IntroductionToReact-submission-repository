@@ -1,5 +1,7 @@
 import React, { useState } from 'react'
 
+let maxVote =0, maxVotedAnecIndex =0;
+
 const App = () => {
   // save clicks of each button to its own state
   console.log('Hello App');
@@ -13,8 +15,6 @@ const App = () => {
     'Debugging is twice as hard as writing the code in the first place. Therefore, if you write the code as cleverly as possible, you are, by definition, not smart enough to debug it.'
   ]
 
-  
-
   const len = anecdotes.length;
 
   const [anec,setAnec] = useState((Math.floor(Math.random()*10))%(len));
@@ -22,11 +22,10 @@ const App = () => {
   const[voteArr, setArr] = useState(new Array(len).fill(0));
   const copyVoteArr = [...voteArr];
 
-  let maxVote =0, maxVotedAnecIndex =0;
-
   const handleOnNextClick = () =>  {
       const val = (Math.floor(Math.random()*10))%(len);
       setAnec(val);
+      console.log('maxVote= ',maxVote, ' maxVoteINDEX= ',maxVotedAnecIndex);
   }
 
   const handleOnVoteClick = () => {
@@ -53,7 +52,6 @@ const App = () => {
           <h2>Anecdote with largest no of vote</h2>
           <p>{anecdotes[maxVotedAnecIndex]}</p>
           <p>has {maxVote} votes</p>
-          
       </div>
   )
 }
