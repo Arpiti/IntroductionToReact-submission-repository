@@ -2,6 +2,8 @@ import React, { useState } from 'react'
 
 const App = () => {
   // save clicks of each button to its own state
+  console.log('Hello App');
+  
   const anecdotes = [
     'If it hurts, do it more often',
     'Adding manpower to a late software project makes it later!',
@@ -14,32 +16,43 @@ const App = () => {
   
 
   const len = anecdotes.length;
-  let val = 0;
 
   const [anec,setAnec] = useState((Math.floor(Math.random()*10))%(len));
 
   const[voteArr, setArr] = useState(new Array(len).fill(0));
   const copyVoteArr = [...voteArr];
 
+  let maxVote =0, maxVotedAnecIndex =0;
 
   const handleOnNextClick = () =>  {
-      val = (Math.floor(Math.random()*10))%(len);
+      const val = (Math.floor(Math.random()*10))%(len);
       setAnec(val);
   }
 
   const handleOnVoteClick = () => {
       copyVoteArr[anec] = copyVoteArr[anec]+1;
+
+      if(maxVote<=copyVoteArr[anec])
+        {
+            maxVote = copyVoteArr[anec];
+            maxVotedAnecIndex = anec;
+        }
       setArr(copyVoteArr);
-      console.log('anec=',anecdotes[anec],' val=',val,' copyVoteArr=',copyVoteArr, ' anec',anec);
+      console.log('maxVote= ',maxVote, ' maxVoteINDEX= ',maxVotedAnecIndex);
   }
 
-  console.log(len);
+
   return (
       <div>
-          <h4>{anecdotes[anec]}</h4>
+          <h2>Anecdote of the day</h2>
+          <p>{anecdotes[anec]}</p>
           <button onClick={handleOnNextClick}>Next Anecdote</button>
           <button onClick={handleOnVoteClick}>Vote</button>
           <div>has {voteArr[anec]} votes</div>
+          <br></br>
+          <h2>Anecdote with largest no of vote</h2>
+          <p>{anecdotes[maxVotedAnecIndex]}</p>
+          <p>has {maxVote} votes</p>
           
       </div>
   )
