@@ -11,14 +11,36 @@ const App = () => {
     'Debugging is twice as hard as writing the code in the first place. Therefore, if you write the code as cleverly as possible, you are, by definition, not smart enough to debug it.'
   ]
 
-  const [anec,setAnec] = useState(0);
+  
+
   const len = anecdotes.length;
-  const val = (anec+1)%(len);
+  let val = 0;
+
+  const [anec,setAnec] = useState((Math.floor(Math.random()*10))%(len));
+
+  const[voteArr, setArr] = useState(new Array(len).fill(0));
+  const copyVoteArr = [...voteArr];
+
+
+  const handleOnNextClick = () =>  {
+      val = (Math.floor(Math.random()*10))%(len);
+      setAnec(val);
+  }
+
+  const handleOnVoteClick = () => {
+      copyVoteArr[anec] = copyVoteArr[anec]+1;
+      setArr(copyVoteArr);
+      console.log('anec=',anecdotes[anec],' val=',val,' copyVoteArr=',copyVoteArr, ' anec',anec);
+  }
+
   console.log(len);
   return (
       <div>
           <h4>{anecdotes[anec]}</h4>
-          <button onClick={()=>setAnec(val)}>Next Anecdote</button>
+          <button onClick={handleOnNextClick}>Next Anecdote</button>
+          <button onClick={handleOnVoteClick}>Vote</button>
+          <div>has {voteArr[anec]} votes</div>
+          
       </div>
   )
 }
