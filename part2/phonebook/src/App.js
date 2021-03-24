@@ -3,15 +3,17 @@ import React, { useState } from 'react'
 const App = () => {
   
 
-  const [ persons, setPersons ] = useState([{name: 'Arto Hellas'}]) ;
-  const [ newName, setNewName ] = useState('Text here')
+  const [ persons, setPersons ] = useState([{name: 'Arto Hellas', number: '040-1234567'}]) ;
+  const [ newName, setNewName ] = useState('')
+  const [ newNumber, setNewNumber ] = useState('')
 
   const isSamePerson = (sum, person) => {
     console.log('person name', person.name);
     console.log('new name', newName);
-    if(person.name == newName)
+    console.log('new number', newNumber);
+
+    if(person.name == newName && person.newNumber == newNumber)
     {
-      console.log('in if condition');
       sum =1;
     }
     return sum;
@@ -21,7 +23,7 @@ const App = () => {
     event.preventDefault();
     console.log('Submit handled');
     
-    const newPerson = {name: newName};
+    const newPerson = {name: newName, number: newNumber};
     const flagSum = persons.reduce(isSamePerson, 0)
     let realPerson = [...persons];
 
@@ -34,13 +36,20 @@ const App = () => {
     
     console.log('real ', realPerson);
     setPersons(realPerson);
+    setNewNumber()
     setNewName('');
  }
 
-  const handleInputChange = (event) => { 
+  const handleNameInputChange = (event) => { 
     //event.preventDefault;
-    console.log('Input Change handled- ',event.target.value);
+    console.log('Input Change handled- ', event.target.value);
     setNewName(event.target.value);
+  }
+
+  const handleNumberInputChange = (event) => { 
+    //event.preventDefault;
+    console.log('Input Change handled- ', event.target.value);
+    setNewNumber(event.target.value);
   }
 
 
@@ -49,7 +58,10 @@ const App = () => {
       <h2>Phonebook</h2>
       <form onSubmit={handleFormSubmit}>
         <div>
-          name: <input onChange={handleInputChange} value={newName}/> 
+          name: <input onChange={handleNameInputChange} value={newName}/> 
+        </div>
+        <div>
+          number: <input onChange={handleNumberInputChange} value={newNumber}/> 
         </div>
         <div>
           <button type="submit">add</button>
@@ -57,7 +69,7 @@ const App = () => {
       </form>
       <h2>Numbers</h2>
       <ul>
-      {persons.map(person=> <li key={person.name}>{person.name}</li>)}
+      {persons.map(person=> <li key={person.name}>{person.name} {person.number}</li>)}
       </ul>
     </div>
   )
