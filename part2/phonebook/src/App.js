@@ -6,17 +6,44 @@ let arr = [
   { name: 'Mary Poppendieck', number: '39-23-6423122' }
 ];
 
-const App = () => {
-  
-  
-  const Filter = () => {
-    return (
-      <div>
-        filter shown with: <input type='text' onChange={handleFilterInputChange} value={filter}/>
-      </div>
-    )
-  }
+const Filter = ({filter, handleFilterInputChange}) => {
+  return (
+    <div>
+      filter shown with: <input type='text' onChange={handleFilterInputChange} value={filter}/>
+    </div>
+  )
+}
 
+const Persons = ({persons}) => {
+  return (
+    <ul>
+    {
+    persons.map(person=> <li key={person.name}>{person.name} {person.number}</li>)
+    //persons.filter(person => (((person.name).indexOf(filter))!=-1))    
+    } 
+    </ul>
+  )
+}
+
+const Form = ({handleFormSubmit, handleNameInputChange, newName, handleNumberInputChange, newNumber}) => {
+
+return (
+<form onSubmit={handleFormSubmit}>
+<div>
+  name: <input onChange={handleNameInputChange} value={newName}/> 
+</div>
+<div>
+  number: <input onChange={handleNumberInputChange} value={newNumber}/> 
+</div>
+<div>
+  <button type="submit">add</button>
+</div>
+</form>
+);
+}
+
+
+const App = () => {
   const [persons, setPersons] = useState(arr)
 
   const [ newName, setNewName ] = useState('')
@@ -28,6 +55,7 @@ const App = () => {
   const handleFilterInputChange = (event) => {
     console.log(event.target.value);
 
+    event.preventDefault();
     let val = event.target.value;
     
     
@@ -51,12 +79,8 @@ const App = () => {
       })  
       setPersons(filt);
     }
-    
-
     console.log('filt',filt);  
     
-    
-
   }
 
   const isSamePerson = (sum, person) => {
@@ -64,9 +88,10 @@ const App = () => {
     console.log('new name', newName);
     console.log('new number', newNumber);
 
-    if(person.name == newName && person.newNumber == newNumber)
+    if(person.name == newName && person.number == newNumber)
     {
       sum =1;
+      console.log('same names bro >>');
     }
     return sum;
   }
@@ -83,8 +108,11 @@ const App = () => {
     console.log('flagsum= ', flagSum);
 
     if(flagSum === 0)
-      realPerson = persons.concat(newPerson);
-    else
+    { 
+       realPerson = persons.concat(newPerson);
+       arr = persons.concat(newPerson);
+    } 
+     else
        window.alert(`${newName} is already added to phonebook`);  
     
     console.log('real ', realPerson);
@@ -108,29 +136,13 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
-      <div>
-        filter shown with: <input  onChange={handleFilterInputChange} value={filter}/>
-      </div>
+     <Filter filter={filter} handleFilterInputChange= {handleFilterInputChange}/>
       <br/>
-      <form onSubmit={handleFormSubmit}>
       <h2>Add new</h2>
-        <div>
-          name: <input onChange={handleNameInputChange} value={newName}/> 
-        </div>
-        <div>
-          number: <input onChange={handleNumberInputChange} value={newNumber}/> 
-        </div>
-        <div>
-          <button type="submit">add</button>
-        </div>
-      </form>
+      <Form handleFormSubmit={handleFormSubmit} handleNameInputChange={handleNameInputChange}
+       newName={newName} handleNumberInputChange={handleNumberInputChange} newNumber={newNumber}/>
       <h2>Numbers</h2>
-      <ul>
-      {
-      persons.map(person=> <li key={person.name}>{person.name} {person.number}</li>)
-      //persons.filter(person => (((person.name).indexOf(filter))!=-1))    
-      } 
-      </ul>
+      <Persons persons={persons}/>
     </div>
   )
 }
