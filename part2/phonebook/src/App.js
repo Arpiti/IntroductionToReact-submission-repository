@@ -1,4 +1,6 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
+import axios from 'axios';
+
 let arr = [
   { name: 'Arto Hellas', number: '040-123456' },
   { name: 'Ada Lovelace', number: '39-44-5323523' },
@@ -44,11 +46,21 @@ const Form = ({ handleFormSubmit, handleNameInputChange, newName, handleNumberIn
 
 
 const App = () => {
-  const [persons, setPersons] = useState(arr)
+  const [persons, setPersons] = useState([])
 
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [filter, setFilter] = useState('');
+
+  useEffect(()=>{
+    console.log('In useEffect');
+    axios
+      .get('http://localhost:3001/persons')
+      .then(response => {
+        console.log('Promise Fulfilled');
+        setPersons(response.data);
+      })
+  },[]);
 
   let finArr = [...arr];
 
