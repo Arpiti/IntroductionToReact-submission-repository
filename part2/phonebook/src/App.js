@@ -1,12 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import axios from 'axios';
 
-let arr = [
-  { name: 'Arto Hellas', number: '040-123456' },
-  { name: 'Ada Lovelace', number: '39-44-5323523' },
-  { name: 'Dan Abramov', number: '12-43-234345' },
-  { name: 'Mary Poppendieck', number: '39-23-6423122' }
-];
+let arr = [];
 
 const Filter = ({ filter, handleFilterInputChange }) => {
   return (
@@ -46,6 +41,8 @@ const Form = ({ handleFormSubmit, handleNameInputChange, newName, handleNumberIn
 
 
 const App = () => {
+
+  console.log('In App() >> start');
   const [persons, setPersons] = useState([])
 
   const [newName, setNewName] = useState('')
@@ -59,8 +56,13 @@ const App = () => {
       .then(response => {
         console.log('Promise Fulfilled');
         setPersons(response.data);
+        arr = response.data;
+        console.log('arr >>', arr);
       })
+    
   },[]);
+
+  console.log('After useEffect');
 
   let finArr = [...arr];
 
@@ -97,7 +99,7 @@ const App = () => {
     console.log('new name', newName);
     console.log('new number', newNumber);
 
-    if ((person.name).localeCompare(newName) && (person.number).localeCompare(newNumber)) {
+    if (((person.name).localeCompare(newName)===0) && ((person.number).localeCompare(newNumber))===0) {
       sum = 1;
       console.log('same names bro >>');
     }
