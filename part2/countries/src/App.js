@@ -13,18 +13,41 @@ function Result({resultCountries}) {
     return (
      <div>
        <h2>{country.name}</h2>
-       <br/>
-       <p>Capital: {country.capital}</p> 
-       <p>Population: {country.population}</p> 
-       <br/>
-       <h3>language</h3>
-       <br/>
-       <ul>
-         {
-         (country.languages).map(lang => <li>{lang.name}</li>)
-        }
-       </ul>
        <img src={country.flag} height='160px' width='200px'/>
+       <br/>
+       <h3>Capital</h3>
+       <p>{country.capital}</p> 
+       <br/>
+       <h3>Population</h3>
+       <p>{country.population}</p> 
+       <br/>
+       <h3>Languages Spoken</h3>
+       <ul class="UnorderedList">
+         {
+         (country.languages).map(lang => <li key = {lang.name}>{lang.name} aka <i>{lang.nativeName}</i></li>)
+         }
+       </ul>
+       <br/>
+       <h3>Currencies</h3>
+       <ul class="UnorderedList">
+         {
+         (country.currencies).map(curr => <li key = {curr.code}>{curr.name}</li>)
+         }
+       </ul>
+       <br/>
+       <h3>Region - Continent</h3>
+       <p>{country.region} - {country.subregion}</p>
+       <br/>
+       <h3>Area</h3>
+       <p>{country.area} km square</p>
+       <br/>
+       <h3>Calling Code</h3>
+       <ul class="UnorderedList">
+         {
+         (country.callingCodes).map(callCode => <li key={callCode}>+{callCode}</li>)
+         }
+       </ul>
+       
 
      </div> 
     );
@@ -33,7 +56,7 @@ function Result({resultCountries}) {
     
     console.log('in Else return');
     return (
-      <ul>
+      <ul class="UnorderedList">
          {
            resultCountries.map(country => <li key={country.alpha2Code}> {country.name} </li>)
          }
@@ -122,11 +145,11 @@ function App() {
 
 
   return (
-    <div>
+    <div className="App">
       <h2> Country Search App</h2>
       <br/>
      <div>
-       find countries: <input type='text' onChange={handleCountryInputChange} value={inputCountry}></input>
+       Find countries: <input type='text' onChange={handleCountryInputChange} value={inputCountry}></input>
      </div>
      <div>
        <br/>
