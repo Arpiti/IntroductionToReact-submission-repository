@@ -5,11 +5,8 @@ import React, {useEffect, useState} from 'react';
 const allCountries_api = 'https://restcountries.eu/rest/v2/all';
 const singleCountryDetail_api = 'https://restcountries.eu/rest/v2/alpha/';
 
-function Result({resultCountries}) {
-  console.log('ResultCountries from Result >>', resultCountries);
-  if(resultCountries.length === 1 && resultCountries[0].alpha2Code != 'NA')
-  {
-    let country = resultCountries[0];
+function DetailResult({resultCountries}) {
+  let country = resultCountries[0];
     return (
      <div>
        <h2>{country.name}</h2>
@@ -35,7 +32,7 @@ function Result({resultCountries}) {
          }
        </ul>
        <br/>
-       <h3>Region - Continent</h3>
+       <h3>Region - SubRegion</h3>
        <p>{country.region} - {country.subregion}</p>
        <br/>
        <h3>Area</h3>
@@ -47,23 +44,60 @@ function Result({resultCountries}) {
          (country.callingCodes).map(callCode => <li key={callCode}>+{callCode}</li>)
          }
        </ul>
-       
-
      </div> 
     );
-  }
+
+}
+
+function Result({resultCountries, setResultCountries}) {
+  
+  console.log('ResultCountries from Result >>', resultCountries);
+ 
+  if(resultCountries.length === 1 && resultCountries[0].alpha2Code != 'NA')
+    return <DetailResult resultCountries={resultCountries}></DetailResult>
+  else if(resultCountries.length === 1 && resultCountries[0].alpha2Code === 'NA')
+    return <div>{resultCountries[0].name}</div>
   else {
-    
     console.log('in Else return');
     return (
       <ul class="UnorderedList">
          {
-           resultCountries.map(country => <li key={country.alpha2Code}> {country.name} </li>)
+           resultCountries.map(country => <li key={country.alpha2Code}> {country.name} 
+           <Button country={country} resultCountries={resultCountries} setResultCountries={setResultCountries}></Button></li>)
          }
        </ul>
     );
   }
 }
+
+
+
+function Button({country,resultCountries,setResultCountries}) {
+  
+  let id = '';
+
+  const findCoun = (country) => 
+  {
+    console.log('id >>', id);
+    return country.name==id.replace("Button","")
+  }
+
+  const showDetailResult = (event) =>
+  {
+    id = event.target.id;
+    let coun = resultCountries.find(findCoun);
+    //console.log('Button id >>', coun);
+    
+    setResultCountries([coun]);
+  }
+
+  return (
+    <button id= {country.name+'Button'} onClick={showDetailResult}>show</button>
+  )
+
+}
+
+
 
 function App() {
 
@@ -154,7 +188,7 @@ function App() {
      <div>
        <br/>
        <br/>
-       <Result resultCountries={resultCountries}/>
+       <Result resultCountries={resultCountries} setResultCountries={setResultCountries}/>
      </div>
     </div>
   );
