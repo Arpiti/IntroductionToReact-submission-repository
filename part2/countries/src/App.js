@@ -3,13 +3,45 @@ import axios from 'axios';
 import React, {useEffect, useState} from 'react';
 
 const allCountriesApi = 'https://restcountries.eu/rest/v2/all';
-const accessKey = '5e85474583bebe818a9e1ffa5209ff80';
+
+//API KEY to remember '5e85474583bebe818a9e1ffa5209ff80' - It's in DEV ENV Variable
+const accessKey = process.env.REACT_APP_API_KEY
 const weatherStackApi = 'http://api.weatherstack.com/current?access_key='+accessKey+'&query=';
 
-function Weather() {
+function Weather({resultCountries}) {
+
+  const [weatherDetail, setWeatherDetail] = useState([]);
+
+  useEffect(()=>{
+
+    if(resultCountries.length === 1 && resultCountries[0].alpha2Code !== 'NA'){
+      let capital = (resultCountries[0].capital); 
+      const weatherUri = weatherStackApi+capital;
+      console.log('weatherUri >>', weatherUri);
+
+      axios
+       .get(weatherUri)
+       .then(response => {
+          console.log(' Waether UseEffect Promise Fulfilled');
+          const data = (response.data);
+          //console.log('data >>', data);
+          let temp = { 'temperature': data.current.temperature, 
+                        'icon': data.current.weather_icons,
+                      'pressure': data.current.pressure,
+                      'humidity': data.current.humidity,
+                      'feelslike': data.current.feelslike };
+          setWeatherDetail(temp);
+       })
+    }
+    },[]);
+
   return (
     <div>
-      
+      <img src={weatherDetail.icon} alt-text={resultCountries[0].capital+'Weather'}/>
+      <p>Temperature {weatherDetail.temperature} &deg;C </p>
+      <p>Pressure {weatherDetail.pressure} Pa</p>
+      <p>Humidity {weatherDetail.humidity}</p>
+      <p>FeelsLike {weatherDetail.feelslike}  &deg;C</p>
     </div>
   )
 }
@@ -55,11 +87,7 @@ function DetailResult({resultCountries}) {
        </ul>
        <br/>
        <h3>Current Weather Report</h3>
-       <ul class="UnorderedList">
-         {
-         (country.callingCodes).map(callCode => <li key={callCode}>+{callCode}</li>)
-         }
-       </ul>
+       <Weather resultCountries={resultCountries}/>
      </div> 
     );
 
@@ -127,23 +155,6 @@ function App() {
         setAllCountries(response.data);
       })
   },[])
-
-  useEffect(()=>{
-    console.log('resultCountries >>', resultCountries);
-
-    if(resultCountries.length === 1 && resultCountries[0].alpha2Code !== 'NA'){
-      let capital = (resultCountries[0].capital); 
-      const weatherUri = weatherStackApi+capital;
-      console.log('weatherUri >>', weatherUri);
-
-      axios
-       .get(weatherUri)
-       .then(response => {
-          console.log(' Waether UseEffect Promise Fulfilled');
-          console.log(response.data);
-       })
-    }
-    });
 
   const handleCountryInputChange = (event) => {
 
