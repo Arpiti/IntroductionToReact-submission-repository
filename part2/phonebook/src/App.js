@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import axios from 'axios';
+import personService from './services/persons';
 
 let arr = [];
 
@@ -51,14 +52,10 @@ const App = () => {
 
   useEffect(()=>{
     console.log('In useEffect');
-    axios
-      .get('http://localhost:3001/persons')
-      .then(response => {
-        console.log('Promise Fulfilled');
-        setPersons(response.data);
-        arr = response.data;
-        console.log('arr >>', arr);
-      })
+
+    personService
+      .getAll()
+      .then( allPersons => setPersons(allPersons));
     
   },[]);
 
@@ -114,18 +111,20 @@ const App = () => {
     const flagSum = persons.reduce(isSamePerson, 0)
     let realPerson = [...persons];
 
-
     console.log('flagsum= ', flagSum);
 
     if (flagSum === 0) {
       realPerson = persons.concat(newPerson);
       arr = persons.concat(newPerson);
+      console.log('real ', realPerson);
+
+      personService
+        .create(newPerson)
+        .then(output => setPersons(persons.concat(output)))
     }
     else
       window.alert(`${newName} is already added to phonebook`);
 
-    console.log('real ', realPerson);
-    setPersons(realPerson);
     setNewNumber('');
     setNewName('');
   }
