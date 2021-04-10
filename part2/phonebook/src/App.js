@@ -18,6 +18,7 @@ const Persons = ({ persons, setPersons }) => {
 
   personService
     .remove(id)
+    .then(window.confirm('Are you sure'))
     .then(() => {
       personService
         .getAll()
