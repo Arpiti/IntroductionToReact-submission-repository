@@ -16,16 +16,18 @@ const Persons = ({ persons, setPersons }) => {
 
  const handleDeleteOnClick = (id) => {
 
-  personService
+  let res = window.confirm('Are you sure, you want to delete the contact');
+
+  if(res) {
+      personService
     .remove(id)
-    .then(window.confirm('Are you sure'))
     .then(() => {
       personService
         .getAll()
         .then(personList => setPersons(personList));
     });
-
- }
+  }
+}
 
   return (
     <ul>
@@ -105,6 +107,8 @@ const App = () => {
 
   }
 
+  let id = -1;
+
   const isSamePerson = (sum, person) => {
     console.log('person name', person.name);
     console.log('new name', newName);
@@ -114,6 +118,11 @@ const App = () => {
       sum = 1;
       console.log('same names bro >>');
     }
+    else if((person.name).localeCompare(newName)===0)
+     {
+        sum = -1;
+        id = person.id;
+     } 
     return sum;
   }
 
@@ -135,6 +144,17 @@ const App = () => {
       personService
         .create(newPerson)
         .then(output => setPersons(persons.concat(output)))
+    }
+    else if(flagSum === -1) {
+      if(window.confirm(`${newName} is already added to phonebook`))
+      {
+        personService
+          .update(id, newPerson)
+          .then(addedPerson => {
+            console.log('id of same person >> ', id);
+            setPersons(persons.map(person => (person.id != id) ? person : addedPerson))
+          })
+      }
     }
     else
       window.alert(`${newName} is already added to phonebook`);
