@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react'
-import axios from 'axios';
 import personService from './services/persons';
 
 let arr = [];
@@ -12,11 +11,25 @@ const Filter = ({ filter, handleFilterInputChange }) => {
   )
 }
 
-const Persons = ({ persons }) => {
+
+const Persons = ({ persons, setPersons }) => {
+
+ const handleDeleteOnClick = (id) => {
+
+  personService
+    .remove(id)
+    .then(() => {
+      personService
+        .getAll()
+        .then(personList => setPersons(personList));
+    });
+
+ }
+
   return (
     <ul>
       {
-        persons.map(person => <li key={person.name}>{person.name} {person.number}</li>)
+        persons.map((person,i) => <li key={i}>{person.name} {person.number} <button onClick={() => handleDeleteOnClick(person.id)}>Delete</button></li>)
         //persons.filter(person => (((person.name).indexOf(filter))!=-1))    
       }
     </ul>
@@ -150,7 +163,7 @@ const App = () => {
       <Form handleFormSubmit={handleFormSubmit} handleNameInputChange={handleNameInputChange}
         newName={newName} handleNumberInputChange={handleNumberInputChange} newNumber={newNumber} />
       <h2>Numbers</h2>
-      <Persons persons={persons} />
+      <Persons persons={persons} setPersons={setPersons} />
     </div>
   )
 }

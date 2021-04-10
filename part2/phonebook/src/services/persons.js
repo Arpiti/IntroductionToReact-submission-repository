@@ -9,8 +9,13 @@ const getAll = () => {
 
 const create = (person) => {
     const request = axios.post(baseUrl, person);
-    console.log('Promise is done 1');
     return request.then( response => response.data);
 }
 
-export default { getAll, create };
+const remove = (id) => {
+    const request = axios.delete(`${baseUrl}/${id}`);
+    console.log('Deleted');
+    return request.then( response => response.data);
+} 
+
+export default { getAll, create, remove };
