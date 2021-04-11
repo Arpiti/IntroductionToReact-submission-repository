@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react'
 import personService from './services/persons';
 
 let arr = [];
+const addedStyle = 'addedStyle';
+const deletedStyle = 'deletedStyle';
 
 const Filter = ({ filter, handleFilterInputChange }) => {
   return (
@@ -12,9 +14,9 @@ const Filter = ({ filter, handleFilterInputChange }) => {
 }
 
 
-const Persons = ({ persons, setPersons }) => {
+const Persons = ({ persons, setPersons, setNotification, setNotificationStyle }) => {
 
- const handleDeleteOnClick = (id) => {
+ const handleDeleteOnClick = (id, personName) => {
 
   let res = window.confirm('Are you sure, you want to delete the contact');
 
@@ -24,15 +26,32 @@ const Persons = ({ persons, setPersons }) => {
     .then(() => {
       personService
         .getAll()
-        .then(personList => setPersons(personList));
-    });
+        .then(personList => {
+          setNotificationStyle(deletedStyle)
+          setPersons(personList);
+          setNotification(`Deleted ${personName}`);
+          setTimeout(()=>{
+            setNotification(null);
+            setNotificationStyle(null);
+          },3000)
+        })
+    })
+    .catch(error => {
+      console.log('In catch block')
+      setNotification (`There's some issue with ${personName}`);   
+      setNotificationStyle(deletedStyle);  
+      setTimeout(()=>{
+        setNotification(null);
+        setNotificationStyle(null);
+      },3000)       
+    })
   }
 }
 
   return (
     <ul>
       {
-        persons.map((person,i) => <li key={i}>{person.name} {person.number} <button onClick={() => handleDeleteOnClick(person.id)}>Delete</button></li>)
+        persons.map((person,i) => <li key={i}>{person.name} {person.number} <button onClick={() => handleDeleteOnClick(person.id, person.name)}>Delete</button></li>)
         //persons.filter(person => (((person.name).indexOf(filter))!=-1))    
       }
     </ul>
@@ -67,6 +86,7 @@ const App = () => {
   const [filter, setFilter] = useState('');
 
   const [notif, setNotification] = useState('');
+  const [notifStyle, setNotificationStyle] = useState('');
 
   useEffect(()=>{
     console.log('In useEffect');
@@ -143,12 +163,22 @@ const App = () => {
       personService
         .create(newPerson)
         .then(output => {
+          setNotificationStyle(addedStyle);
           setPersons(persons.concat(output))
-          setNotification(newName);
+          setNotification(`Added ${newName}`);
           setTimeout(() => {
-            setNotification(null)
+            setNotification(null);
+            setNotificationStyle(null);
           }, 3000);
 
+        })
+        .catch(error => {
+          setNotification (`There's some issue with ${newPerson}`);   
+          setNotificationStyle(deletedStyle);    
+          setTimeout(()=>{
+            setNotification(null);
+            setNotificationStyle(null);
+          },3000)     
         })
     }
     else if(flagSum === -1) {
@@ -159,6 +189,14 @@ const App = () => {
           .then(addedPerson => {
             console.log('id of same person >> ', id);
             setPersons(persons.map(person => (person.id != id) ? person : addedPerson))
+          })
+          .catch(error => {
+            setNotification (`There's some issue with ${newPerson}`);   
+            setNotificationStyle(deletedStyle);       
+            setTimeout(()=>{
+              setNotification(null);
+              setNotificationStyle(null);
+            },3000)  
           })
       }
     }
@@ -185,23 +223,45 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
-      <Notification newName={notif}/>
+      <Notification message={notif} style={notifStyle}/>
       <Filter filter={filter} handleFilterInputChange={handleFilterInputChange} />
       <br />
       <h2>Add new</h2>
       <Form handleFormSubmit={handleFormSubmit} handleNameInputChange={handleNameInputChange}
         newName={newName} handleNumberInputChange={handleNumberInputChange} newNumber={newNumber} />
       <h2>Numbers</h2>
-      <Persons persons={persons} setPersons={setPersons} />
+      <Persons persons={persons} setPersons={setPersons} setNotification={setNotification} setNotificationStyle={setNotificationStyle}/>
     </div>
   )
 }
 
-const Notification = ({newName}) => {
-  if(newName === undefined || newName === '' || newName === null)
-    return null;
-  return <div className='notification'>Added {newName}</div>
-    
+const Notification = ({message, style}) => {
+  
+  const addedStyle = {
+    backgroundColor: 'lightseagreen',
+    color: 'darkgreen',
+    padding: '.1rem', 
+    borderColor: 'darkgreen',
+    borderStyle: 'solid',
+    width: '60%',
+    margin: 'auto'
+  }
+
+  const deletedStyle = {
+    backgroundColor: 'lightgrey',
+    color: 'red',
+    padding: '.1rem', 
+    borderColor: 'red',
+    borderStyle: 'solid',
+    width: '60%',
+    margin: 'auto'
+  }
+
+  if(style === 'deletedStyle')
+    return <div style={deletedStyle}>{message}</div>;
+  else if(style === 'addedStyle')
+    return <div style={addedStyle}>{message}</div>;
+  return null;
 }
 
 export default App
