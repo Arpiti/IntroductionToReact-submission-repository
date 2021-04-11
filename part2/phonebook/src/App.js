@@ -66,6 +66,8 @@ const App = () => {
   const [newNumber, setNewNumber] = useState('')
   const [filter, setFilter] = useState('');
 
+  const [notif, setNotification] = useState('');
+
   useEffect(()=>{
     console.log('In useEffect');
 
@@ -131,19 +133,23 @@ const App = () => {
     console.log('Submit handled');
 
     const newPerson = { name: newName, number: newNumber };
-    const flagSum = persons.reduce(isSamePerson, 0)
-    let realPerson = [...persons];
+    const flagSum = persons.reduce(isSamePerson, 0);
 
     console.log('flagsum= ', flagSum);
 
     if (flagSum === 0) {
-      realPerson = persons.concat(newPerson);
       arr = persons.concat(newPerson);
-      console.log('real ', realPerson);
-
+      
       personService
         .create(newPerson)
-        .then(output => setPersons(persons.concat(output)))
+        .then(output => {
+          setPersons(persons.concat(output))
+          setNotification(newName);
+          setTimeout(() => {
+            setNotification(null)
+          }, 3000);
+
+        })
     }
     else if(flagSum === -1) {
       if(window.confirm(`${newName} is already added to phonebook`))
@@ -175,9 +181,11 @@ const App = () => {
     setNewNumber(event.target.value);
   }
 
+  
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification newName={notif}/>
       <Filter filter={filter} handleFilterInputChange={handleFilterInputChange} />
       <br />
       <h2>Add new</h2>
@@ -189,6 +197,11 @@ const App = () => {
   )
 }
 
-
+const Notification = ({newName}) => {
+  if(newName === undefined || newName === '' || newName === null)
+    return null;
+  return <div className='notification'>Added {newName}</div>
+    
+}
 
 export default App
