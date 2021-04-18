@@ -1,13 +1,12 @@
 import React, { useState, useEffect } from 'react'
 import personService from './services/persons';
 
-let arr = [];
 const addedStyle = 'addedStyle';
 const deletedStyle = 'deletedStyle';
 
 const Filter = ({ filter, handleFilterInputChange }) => {
   return (
-    <div>
+    <div className="formField">
       filter shown with: <input type='text' onChange={handleFilterInputChange} value={filter} />
     </div>
   )
@@ -51,7 +50,7 @@ const Persons = ({ persons, setPersons, setNotification, setNotificationStyle })
   return (
     <ul>
       {
-        persons.map((person,i) => <li key={i}>{person.name} {person.number} <button onClick={() => handleDeleteOnClick(person.id, person.name)}>Delete</button></li>)
+        persons.map((person,i) => <li key={i}>{person.name} <br/>{person.number}<br/> <button onClick={() => handleDeleteOnClick(person.id, person.name)}>Delete</button><br/><br/></li>)
         //persons.filter(person => (((person.name).indexOf(filter))!=-1))    
       }
     </ul>
@@ -62,11 +61,11 @@ const Form = ({ handleFormSubmit, handleNameInputChange, newName, handleNumberIn
 
   return (
     <form onSubmit={handleFormSubmit}>
-      <div>
-        name: <input onChange={handleNameInputChange} value={newName} />
+      <div className="formField">
+        Name: <input onChange={handleNameInputChange} value={newName} />
       </div>
-      <div>
-        number: <input onChange={handleNumberInputChange} value={newNumber} />
+      <div className="formField">
+        Number: <input onChange={handleNumberInputChange} value={newNumber} />
       </div>
       <div>
         <button type="submit">add</button>
@@ -99,20 +98,17 @@ const App = () => {
 
   console.log('After useEffect');
 
-  let finArr = [...arr];
-
   const handleFilterInputChange = (event) => {
-    console.log(event.target.value);
 
-    event.preventDefault();
     let val = event.target.value;
-
 
     if (val == '' || val === 'underfined') {
       console.log('val', val);
       setFilter(val);
-      console.log('finArr', finArr);
-      setPersons(finArr);
+     
+      personService
+        .getAll()
+        .then( allPersons => setPersons(allPersons));
     }
     else {
       setFilter(val);
@@ -158,7 +154,6 @@ const App = () => {
     console.log('flagsum= ', flagSum);
 
     if (flagSum === 0) {
-      arr = persons.concat(newPerson);
       
       personService
         .create(newPerson)

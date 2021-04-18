@@ -13,7 +13,11 @@ code {
 }
 
 body {
-  padding-left: 1rem;
+  padding: 1rem;
+}
+
+.formField {
+padding: .25rem;
 }
 
 .notification {
@@ -24,4 +28,8 @@ body {
   border-style: solid;
   width: 60%;
   margin: auto;
+}
+
+button {
+  color: blueviolet;
 }
