@@ -1,7 +1,9 @@
 const express = require('express')
 const app = express()
+const cors = require('cors')
 
 app.use(express.json()); //using express json parser to parse POST req data and process it
+app.use(cors());
 
 let notes = [{
   id: 1,
@@ -31,6 +33,7 @@ app.get('/api/notes', (request, response) => {
 
 app.get('/api/notes/:id', (request, response) => {
   const id = Number(request.params.id)
+  console.log('in get id');
   const note = notes.find(note => note.id === id)
   if(note)
     response.json(note);
@@ -45,6 +48,27 @@ app.delete('/api/notes/:id', (request, response) => {
   response.status(204).end()
 })
 
+app.put('/api/notes/:id', (request, response) => {
+  //Automatically stringifies the JS object into string
+  const id = Number(request.params.id)
+  const body = request.body;
+  let newnote; 
+
+  notes = notes.map( note => {
+    if(id === note.id)
+    {
+       newnote = {
+        content: body.content,
+        important: body.important || false,
+        date: body.date,
+        id: generateId()
+      }
+      return newnote;
+    }
+    return note;
+  })
+  response.status(200).json(newnote);
+})
 //Without the json-parser, the body property would be undefined. 
 //The json-parser functions so that it takes the JSON data of a request, 
 //transforms it into a JavaScript object and then attaches it to the body 
